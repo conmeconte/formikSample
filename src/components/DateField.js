@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { Field, ErrorMessage } from 'formik';
-import { TextField } from '@material-ui/core';
+import { TextField, Button } from '@material-ui/core';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 
 const styles = theme => ({
@@ -41,7 +41,7 @@ const styles = theme => ({
   }
 });
 export default withStyles(styles)(props => {
-  const { classes, index } = props;
+  const { classes, index, deleteTimeSlot } = props;
   return(
     <div className={classes.row}>
       <DateRangeIcon className={classes.calendarIcon}/>
@@ -53,7 +53,7 @@ export default withStyles(styles)(props => {
             ...props
           })=>(
             <TextField
-              id={`schedule_data[${index}].start_date`}
+              id='start_date'
               label="Start Date"
               type="date"
               InputLabelProps={{shrink: true}}
@@ -134,6 +134,7 @@ export default withStyles(styles)(props => {
           )
         }
       />
+      {index !== 0 && <Button variant="contained" color="default" onClick={()=>{deleteTimeSlot()}}>Delete</Button>}
     </div>
   )
 })

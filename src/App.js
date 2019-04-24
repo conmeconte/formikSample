@@ -3,26 +3,32 @@ import './App.css';
 import FormComp from './components/Form';
 import { Formik, Form } from 'formik';
 import {scheduleSchema } from './schema/formSchema';
+import Paper from '@material-ui/core/Paper';
 class App extends Component {
   constructor(props){
     super(props);
-    this.initValues={
-      name: '',
-      description: '',
-      schedule_data: [
-        {start_date: '',
-        end_date: '',
-        start_time: '',
-        end_time: ''}
-      ],
-    };
+    this.state={
+      submitted: null,
+      initValues: {
+        name: '',
+        description: '',
+        schedule_data: [
+          {
+            start_date: '',
+            end_date: '',
+            start_time: '',
+            end_time: ''
+          }
+        ],
+      }
+    }
   }
   addMoreTimeSlots = (values, setFieldValue, formik) => {
     let newSchedule = {
-      start_time: "00:00",
-      end_time: "00:00",
-      days: [],
-      allDay: true
+      start_time: "",
+      end_time: "",
+      start_date: "",
+      end_date: "",
     }
     let schedule_data = values.schedule_data;
     schedule_data.push(newSchedule);
@@ -33,34 +39,33 @@ class App extends Component {
   deleteTimeSlot = (index, values, formik) => {
     let timeslots = values.schedule_data
     timeslots.splice(index, 1);
-    /** updating initValue of formik through state instead of using formik method
-     * issue on tracking the touched and validation state of delete when use formik method
-     */
+
     this.setState({
-      scheduleInit: {
+      initValues: {
         ...values
       }
     });
     formik.setFieldTouched(`schedule_data[${index}].touched`);
   };
 
-  submitForm = (form, formik, type) => {
-    alert('Form submitted', form); 
+  submitForm = (values, formik) => {
+    this.setState({
+      submitted: values
+    })
   }
   render() {
     return (
       <div className="App" style={{padding: 50}}>
         <Formik
-          initialValues={this.initValues}
+          initialValues={this.state.initValues}
           onSubmit={(values, formik)=>{
-            this.submitForm(values, formik, 'nameEdit');
+            this.submitForm(values, formik);
           }}
           validationSchema={scheduleSchema}
           enableReinitialize={true}
           render={props=>(
             <Form>
               <FormComp 
-                index={0} 
                 formik={props}
                 addMoreTimeSlots={()=>this.addMoreTimeSlots(props.values, props.setFieldValue, props)}
                 deleteTimeSlot={index=>this.deleteTimeSlot(index, props.values, props)}
@@ -68,6 +73,7 @@ class App extends Component {
             </Form>
           )}
         />
+        {<Paper style={{padding: 20, minHeight: 300}}>{this.state.submitted && JSON.stringify(this.state.submitted)}</Paper>}
       </div>
     );
   }

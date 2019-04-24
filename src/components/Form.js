@@ -8,15 +8,15 @@ import {
 import DateField from './DateField';
 
 export default props => {
-  const { index, formik} = props;
+  const {formik, addMoreTimeSlots, deleteTimeSlot} = props;
   return(
-    <div>
+    <div style={{marginBottom: 20}}>
       <Field
         name={'name'}
         render={({
           field, // { name, value, onChange, onBlur }
           form, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-          ...props
+          // ...props
         })=>{
           return(
             <TextField
@@ -26,7 +26,7 @@ export default props => {
               fullWidth
               required
               {...field}
-              {...props}
+              // {...props}
             />
           )
       }}
@@ -37,7 +37,7 @@ export default props => {
         render={({
           field, // { name, value, onChange, onBlur }
           form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-          ...props
+          // ...props
         })=>{
           return(
             <TextField
@@ -46,14 +46,21 @@ export default props => {
               style={{marginTop: 20}}
               fullWidth
               {...field}
-              {...props}
+              // {...props}
             />
           )
       }}
       />
       <ErrorMessage name="description">{msg=><FormHelperText error={true}>{msg}</FormHelperText>}</ErrorMessage>
-      <DateField index={index}/>
-      <Button variant="contained" color="primary" onClick={()=>{formik.submitForm()}}>Submit</Button>
+      {
+        formik.values.schedule_data.map((schedule, index)=>{
+          return <DateField key={index} index={index} deleteTimeSlot={()=>deleteTimeSlot(index)}/>
+        })
+      }
+      <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 20}}>
+        <Button variant="contained" color="primary" onClick={()=>{addMoreTimeSlots()}}>Add More</Button>
+        <Button variant="contained" color="primary" onClick={()=>{formik.submitForm()}}>Submit</Button>
+      </div>
     </div>
   )
 };
